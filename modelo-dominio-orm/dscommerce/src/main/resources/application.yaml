@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: dscommerce
+  datasource:
+    url: jdbc:h2:mem:dscommerce_db
+    username: dev
+    password: 123456
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    
