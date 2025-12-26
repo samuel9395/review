@@ -16,6 +16,8 @@ public class User {
     private String name;
     private String email;
     private String phone;
+    // Aqui adicionei essa anotação pois estava dando erro na inserção por não encontrar a coluna birth_date
+    @Column(name = "birth_date")
     private LocalDate brithDate;
     private String password;
 
