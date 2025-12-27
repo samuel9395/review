@@ -53,8 +53,4 @@ public class Participante {
     public List<Atividade> getAtividades() {
         return atividades;
     }
-
-    public void setAtividades(List<Atividade> atividades) {
-        this.atividades = atividades;
-    }
 }
