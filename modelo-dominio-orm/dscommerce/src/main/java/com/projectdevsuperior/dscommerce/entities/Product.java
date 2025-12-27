@@ -30,6 +30,7 @@ public class Product {
 
     // Aqui colocamos id.product porque dentro da classe OrderItem o product não é passado diretamente.
     // Ele está dentro do id através do atributo(private OrderItemPK id = new OrderItemPK();) na classe OrderItemPK.
+
     @OneToMany(mappedBy = "id.product")
     private Set<OrderItem> items = new HashSet<>();
 
