@@ -20,9 +20,8 @@ public class ProductDTO {
         this.imgUrl = imgUrl;
     }
 
-    // Construtor para ser usado no ProductService, para não precisar passar parêmetro por
-    // parêmetro dentro do método  public ProductDTO findById(Long id){} na classe ProductService
-
+    // Construtor que recebe a entidade Product
+    // Usado na camada de serviço para converter Entity -> DTO
     public ProductDTO(Product entity) {
         id = entity.getId();
         name = entity.getName();
