@@ -3,6 +3,7 @@ package com.projectdevsuperior.dscommerce.services;
 import com.projectdevsuperior.dscommerce.dto.ProductDTO;
 import com.projectdevsuperior.dscommerce.entities.Product;
 import com.projectdevsuperior.dscommerce.repositories.ProductRepository;
+import com.projectdevsuperior.dscommerce.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,25 +15,45 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
+    // A camada de serviço depende da camada de acesso a dados (Repository)
     @Autowired
-    private ProductRepository repository;                      // A camada de serviço depende da camada de acesso a dados (Repository)
+    private ProductRepository repository;
 
-    @Transactional(readOnly = true)                            // readOnly = true evita lock desnecessário no banco
-    public ProductDTO findById(Long id) {                      // Método responsável por buscar um produto pelo id
-        Optional<Product> result = repository.findById(id);    // Busca no banco de dados o id passado como argumento, e retorna para a variável.
-        Product product = result.get();                        // Aqui pegamos o objeto Product que está dentro do Optional usando o método get
-        ProductDTO dto = new ProductDTO(product);              // Aqui copiamos os dados do produto(product) para um novo objeto do tipo ProductDTO
-        return dto;                                            // Retorna o DTO para o controller
-    }
-
+    // readOnly = true evita lock desnecessário no banco
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable) {       // Método responsável por buscar todos os produtos de forma paginada
-        Page<Product> result = repository.findAll(pageable);   // Aqui mudamos para o Page, para fazer a busca paginada
-        return result.map(x -> new ProductDTO(x));     // Converte cada Product em ProductDTO e retorna como lista
+    // Método responsável por buscar um produto pelo id
+    public ProductDTO findById(Long id) {
+
+        // Busca no banco de dados o id passado como argumento, e retorna para a variável
+        // Usado o método <orElseThrow> para lançar uma exceção customizada
+        Optional<Product> result = Optional.of(repository
+                .findById(id).orElseThrow(
+                        () -> new ResourceNotFoundException("Recurso não encontrado!")));
+
+        // Aqui pegamos o objeto Product que está dentro do Optional usando o método get
+        Product product = result.get();
+
+        // Aqui copiamos os dados do produto(product) para um novo objeto do tipo ProductDTO
+        ProductDTO dto = new ProductDTO(product);
+
+        // Retorna o DTO para o controller
+        return dto;
     }
 
+    // Método responsável por buscar todos os produtos de forma paginada
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findAll(Pageable pageable) {
+
+        // Aqui mudamos para o Page, para fazer a busca paginada
+        Page<Product> result = repository.findAll(pageable);
+
+        // Converte cada Product em ProductDTO e retorna como lista
+        return result.map(x -> new ProductDTO(x));
+    }
+
+    // Método responsável por inserir novo produto
     @Transactional
-    public ProductDTO insert(ProductDTO dto) {                 // Método responsável por inserir novo produto
+    public ProductDTO insert(ProductDTO dto) {
 
         // Cria uma nova entidade Product inserindo os campos á seguir
         Product entity = new Product();
