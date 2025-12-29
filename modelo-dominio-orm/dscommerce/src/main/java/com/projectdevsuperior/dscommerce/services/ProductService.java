@@ -58,7 +58,7 @@ public class ProductService {
         Product entity = repository.getReferenceById(id);
 
         // Atualiza os dados da entidade
-        copyDtoToENtity(dto, entity);
+        copyDtoToEntity(dto, entity);
 
         // Salva as alterações
         entity = repository.save(entity);
@@ -67,8 +67,16 @@ public class ProductService {
         return new ProductDTO(entity);
     }
 
+    // Método responsável por deletar o produto pelo id
+    @Transactional
+    public void delete(Long id) {
+
+        // Remove o registro do banco
+        repository.deleteById(id);
+    }
+
     // Método auxiliar para copiar dados do DTO para a entidade
-    private void copyDtoToENtity(ProductDTO dto, Product entity) {
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
 
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
@@ -84,4 +92,5 @@ public class ProductService {
 * public ProductDTO findById(Long id) {
 *    Product product = repository.findById(id).get();
 *    return new ProductDTO(product);
+* }
  * */
