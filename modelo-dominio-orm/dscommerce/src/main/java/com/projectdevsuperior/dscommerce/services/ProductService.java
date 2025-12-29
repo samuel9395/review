@@ -3,11 +3,15 @@ package com.projectdevsuperior.dscommerce.services;
 import com.projectdevsuperior.dscommerce.dto.ProductDTO;
 import com.projectdevsuperior.dscommerce.entities.Product;
 import com.projectdevsuperior.dscommerce.repositories.ProductRepository;
+import com.projectdevsuperior.dscommerce.services.exceptions.DatabaseException;
 import com.projectdevsuperior.dscommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -75,25 +79,43 @@ public class ProductService {
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
 
-        // Obtém a referência da entidade pelo id
-        Product entity = repository.getReferenceById(id);
+        try {
+            // Obtém a referência da entidade pelo id
+            Product entity = repository.getReferenceById(id);
 
-        // Atualiza os dados da entidade
-        copyDtoToEntity(dto, entity);
+            // Atualiza os dados da entidade
+            copyDtoToEntity(dto, entity);
 
-        // Salva as alterações
-        entity = repository.save(entity);
+            // Salva as alterações
+            entity = repository.save(entity);
 
-        // Retorna o DTO atualizado
-        return new ProductDTO(entity);
+            // Retorna o DTO atualizado
+            return new ProductDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Recurso não encontrado!");
+        }
     }
 
     // Método responsável por deletar o produto pelo id
-    @Transactional
+    // O parâmetro adicionado na anotação só vai executar a transação se o método estiver no contexto de outra transação.
+    // Caso contrário ele não envolve com o Transactional e captura a exceção de integridade do banco de dados
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
 
-        // Remove o registro do banco
-        repository.deleteById(id);
+        // Condicional para validar se o recurso existe antes de deletar,
+        // caso não exista é lançada uma exceção customizada
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado: id não existe!");
+        }
+
+        try {
+            // Remove o registro do banco
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+
+            // Lançamento de exceção customiza para serviço de banco de dados
+            throw new DatabaseException("Falha de integridade referencial.");
+        }
     }
 
     // Método auxiliar para copiar dados do DTO para a entidade

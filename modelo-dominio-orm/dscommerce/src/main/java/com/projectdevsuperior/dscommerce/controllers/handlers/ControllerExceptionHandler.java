@@ -1,6 +1,7 @@
 package com.projectdevsuperior.dscommerce.controllers.handlers;
 
 import com.projectdevsuperior.dscommerce.dto.CustomError;
+import com.projectdevsuperior.dscommerce.services.exceptions.DatabaseException;
 import com.projectdevsuperior.dscommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,18 @@ import java.time.Instant;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
+    // Tratamento para erros 404
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<CustomError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
+        CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    // Tratamento para erro de integridade do banco de dados
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<CustomError> database(DatabaseException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
