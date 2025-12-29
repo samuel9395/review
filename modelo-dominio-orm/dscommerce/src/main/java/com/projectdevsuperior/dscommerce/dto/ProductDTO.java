@@ -2,7 +2,6 @@ package com.projectdevsuperior.dscommerce.dto;
 
 import com.projectdevsuperior.dscommerce.entities.Product;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
