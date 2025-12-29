@@ -2,6 +2,7 @@ package com.projectdevsuperior.dscommerce.controllers;
 
 import com.projectdevsuperior.dscommerce.dto.ProductDTO;
 import com.projectdevsuperior.dscommerce.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +24,6 @@ public class ProductController {
     // Introduzido a classe ResponseEntity<> para melhorar a resposta
     // com o status http(200, 201, 404), o corpo da resposta(DTO, lista, página) e os headers(Location, Authorization).
 
-    // Endpoint para buscar um produto pelo id
-    // Exemplo: GET /products/1
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
-       ProductDTO dto = service.findById(id);
-       return ResponseEntity.ok(dto);
-    }
-
     // Endpoint para buscar todos os produtos
     // Suporta paginação através do Pageable
     // Exemplo: GET /products?page=0&size=10
@@ -40,10 +33,18 @@ public class ProductController {
         return ResponseEntity.ok(dto);
     }
 
+    // Endpoint para buscar um produto pelo id
+    // Exemplo: GET /products/1
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
+       ProductDTO dto = service.findById(id);
+       return ResponseEntity.ok(dto);
+    }
+
     // Endpoint para inserir novos produtos
     // POST /products
     @PostMapping
-    public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO dto) {
 
         // Chama o service para salvar o produto
         dto = service.insert(dto);
@@ -59,7 +60,7 @@ public class ProductController {
     // Endpoint para atualizar um produto pelo id
     // PUT /products/{id}
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
         dto = service.update(id, dto);
         return ResponseEntity.ok(dto);
     }

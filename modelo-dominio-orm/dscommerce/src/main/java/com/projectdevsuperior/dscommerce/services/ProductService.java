@@ -23,6 +23,17 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
+    // Método responsável por buscar todos os produtos de forma paginada
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findAll(Pageable pageable) {
+
+        // Aqui mudamos para o Page, para fazer a busca paginada
+        Page<Product> result = repository.findAll(pageable);
+
+        // Converte cada Product em ProductDTO e retorna como lista
+        return result.map(x -> new ProductDTO(x));
+    }
+
     // readOnly = true evita lock desnecessário no banco
     @Transactional(readOnly = true)
     // Método responsável por buscar um produto pelo id
@@ -42,17 +53,6 @@ public class ProductService {
 
         // Retorna o DTO para o controller
         return dto;
-    }
-
-    // Método responsável por buscar todos os produtos de forma paginada
-    @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable) {
-
-        // Aqui mudamos para o Page, para fazer a busca paginada
-        Page<Product> result = repository.findAll(pageable);
-
-        // Converte cada Product em ProductDTO e retorna como lista
-        return result.map(x -> new ProductDTO(x));
     }
 
     // Método responsável por inserir novo produto
@@ -92,7 +92,7 @@ public class ProductService {
             // Retorna o DTO atualizado
             return new ProductDTO(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException("Recurso não encontrado!");
+            throw new ResourceNotFoundException("Recurso não encontrado: id não existe!");
         }
     }
 
