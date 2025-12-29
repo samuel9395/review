@@ -55,4 +55,12 @@ public class ProductController {
         // Retorna o status 201 Created com o corpo do DTO
         return ResponseEntity.created(uri).body(dto);
     }
+
+    // Endpoint para atualizar um produto pelo id
+    // PUT /products/{id}
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+        dto = service.update(id, dto);
+        return ResponseEntity.ok(dto);
+    }
 }

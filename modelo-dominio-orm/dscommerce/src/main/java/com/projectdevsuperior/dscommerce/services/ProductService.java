@@ -32,17 +32,48 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO insert(ProductDTO dto) {
+    public ProductDTO insert(ProductDTO dto) {                 // Método responsável por inserir novo produto
 
+        // Cria uma nova entidade Product inserindo os campos á seguir
         Product entity = new Product();
+
+        // Aqui posso usar também o método copyDtoToENtity, como feito no método update
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setPrice(dto.getPrice());
         entity.setImgUrl(dto.getImgUrl());
 
+        // Salva no banco de dados
         entity = repository.save(entity);
 
+        // Retorna o DTO
         return new ProductDTO(entity);
+    }
+
+    // Método responsável por atualizar um produto existente
+    @Transactional
+    public ProductDTO update(Long id, ProductDTO dto) {
+
+        // Obtém a referência da entidade pelo id
+        Product entity = repository.getReferenceById(id);
+
+        // Atualiza os dados da entidade
+        copyDtoToENtity(dto, entity);
+
+        // Salva as alterações
+        entity = repository.save(entity);
+
+        // Retorna o DTO atualizado
+        return new ProductDTO(entity);
+    }
+
+    // Método auxiliar para copiar dados do DTO para a entidade
+    private void copyDtoToENtity(ProductDTO dto, Product entity) {
+
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
     }
 }
 
