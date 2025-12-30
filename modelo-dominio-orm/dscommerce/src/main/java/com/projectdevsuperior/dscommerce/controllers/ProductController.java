@@ -68,7 +68,7 @@ public class ProductController {
     // Endpoint por deletar um produto pelo id
     // DELETE /products/{id}
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
