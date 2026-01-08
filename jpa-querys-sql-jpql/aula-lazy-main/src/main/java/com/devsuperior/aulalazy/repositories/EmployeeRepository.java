@@ -9,6 +9,9 @@ import com.devsuperior.aulalazy.entities.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
+    // Consulta em JPQL
 	@Query("SELECT obj FROM Employee obj JOIN FETCH obj.department")
 	List<Employee> findEmployeesWithDepartments();
+
+    List<Employee> findByNameContainingIgnoreCase(String name);
 }
