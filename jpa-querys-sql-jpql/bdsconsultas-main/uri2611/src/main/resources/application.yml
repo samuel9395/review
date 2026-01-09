@@ -1,12 +1,12 @@
 spring:
   application:
-    name: uri2602
+    name: uri2611
 
   profiles:
     active: dev
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/uri2602
+    url: jdbc:postgresql://localhost:5432/uri2611
     username: postgres
     password: escala79
     driver-class-name: org.postgresql.Driver

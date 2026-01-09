@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: uri2621
+
+  profiles:
+    active: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/uri2621
+    username: postgres
+    password: escala79
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      jdbc:
+        lob:
+          non_contextual_creation: true
