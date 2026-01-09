@@ -25,10 +25,11 @@ public class ProductService {
 
     // Método responsável por buscar todos os produtos de forma paginada
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable) {
+    public Page<ProductDTO> findAll(String name, Pageable pageable) {
 
         // Aqui mudamos para o Page, para fazer a busca paginada
-        Page<Product> result = repository.findAll(pageable);
+        // Adicionada a variável name para também realizar buscas de produto por nome
+        Page<Product> result = repository.searchByName(name, pageable);
 
         // Converte cada Product em ProductDTO e retorna como lista
         return result.map(x -> new ProductDTO(x));

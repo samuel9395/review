@@ -28,8 +28,11 @@ public class ProductController {
     // Suporta paginação através do Pageable
     // Exemplo: GET /products?page=0&size=10
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable) {
-        Page<ProductDTO> dto = service.findAll(pageable);
+    public ResponseEntity<Page<ProductDTO>> findAll(
+            // Configurado o RequestParam com a opção de receber ou não o parâmetro name
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Pageable pageable) {
+        Page<ProductDTO> dto = service.findAll(name, pageable);
         return ResponseEntity.ok(dto);
     }
 
