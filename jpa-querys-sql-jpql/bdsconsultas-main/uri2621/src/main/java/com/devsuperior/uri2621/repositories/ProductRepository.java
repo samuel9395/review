@@ -16,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "FROM products prod " +
             "INNER JOIN providers prov ON prov.id = prod.id_providers " +
             "WHERE prod.amount BETWEEN 10 AND 20 " +
-            "AND prov.name LIKE :product% ")
+            "AND prov.name LIKE CONCAT(:product, '%') ")
     List<ProductMinProjection> search1(String product);
 
     @Query(value =

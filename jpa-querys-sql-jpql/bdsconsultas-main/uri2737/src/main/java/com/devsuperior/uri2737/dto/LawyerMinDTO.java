@@ -38,6 +38,6 @@ public class LawyerMinDTO {
 
 	@Override
 	public String toString() {
-		return "LawyerMinDTO [name=" + name + ", customersNumber=" + customersNumber + "]";
+		return "LawyerMinDTO [ name: " + name + ", customersNumber: " + customersNumber + " ]";
 	}
 }

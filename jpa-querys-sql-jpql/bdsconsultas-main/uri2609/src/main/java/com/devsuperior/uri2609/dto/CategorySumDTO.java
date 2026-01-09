@@ -38,6 +38,6 @@ public class CategorySumDTO {
 
 	@Override
 	public String toString() {
-		return "CategorySumDTO [name=" + name + ", sum=" + sum + "]";
+		return "CategorySumDTO [ name: " + name + ", sum: " + sum + " ]";
 	}
 }

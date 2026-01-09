@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: uri2737
+
+  profiles:
+    active: DEVELOPER
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/uri2737
+    username: postgres
+    password: escala79
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+      jdbc:
+        lob:
+          non_contextual_creation: true
