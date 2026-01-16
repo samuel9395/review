@@ -1,14 +1,11 @@
 package com.devsuperior.demo.entities;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_user")
@@ -22,6 +19,14 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
+
+    // Tabela de associação com o relacionamento @ManyToMany
+    @ManyToMany
+    @JoinTable(name = "tb_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -65,6 +70,29 @@ public class User {
         this.password = password;
     }
 
+    /**
+     * Método para adicionar um role ao usuário
+     * Esse método vai pegar a coleção que se chama roles e adicionar ao role(usuário)
+     * @param role
+     */
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    /**
+     * Aqui passamos um nome(ex: admin) e testamos se o ‘user’ possui esse role(admin)
+     * Se não for encontrado um role para o 'user', retornamos false
+     * @param roleName
+     * @return
+     */
+    public boolean hasRole(String roleName){
+        for (Role role : roles) {
+            if (role.getAuthority().equals(roleName)){
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
