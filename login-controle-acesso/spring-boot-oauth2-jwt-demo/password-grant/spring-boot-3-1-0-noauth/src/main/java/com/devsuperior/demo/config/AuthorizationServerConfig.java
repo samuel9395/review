@@ -71,14 +71,17 @@ public class AuthorizationServerConfig {
 	@Order(2)
 	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
 
+        // Configuração para o Authorization Server funcionar com o Spring Security
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
+        // Configuração do ‘token’ endpoint, de customização do ‘token’, e configuração de autenticação(codificação, formato, assinatura).
 		// @formatter:off
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 			.tokenEndpoint(tokenEndpoint -> tokenEndpoint
 				.accessTokenRequestConverter(new CustomPasswordAuthenticationConverter())
 				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService, passwordEncoder())));
 
+        // Configuração para o 'token' trabalhar no formato jwt
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		// @formatter:on
 
@@ -95,6 +98,7 @@ public class AuthorizationServerConfig {
 		return new InMemoryOAuth2AuthorizationConsentService();
 	}
 
+    // Configuração de autenticação / password encoder
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -147,6 +151,10 @@ public class AuthorizationServerConfig {
 		return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator);
 	}
 
+    /**
+     * Método para customizar o token gerando inclusive o "claim(reivindicação)"
+     * @return
+     */
 	@Bean
 	public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
 		return context -> {
@@ -155,9 +163,9 @@ public class AuthorizationServerConfig {
 			List<String> authorities = user.getAuthorities().stream().map(x -> x.getAuthority()).toList();
 			if (context.getTokenType().getValue().equals("access_token")) {
 				// @formatter:off
-				context.getClaims()
-					.claim("authorities", authorities)
-					.claim("username", user.getUsername());
+				context.getClaims() // aqui posso incluir informações no payload do 'token'
+					.claim("authorities", authorities) // reivindicação de perfis
+					.claim("username", user.getUsername()); // reivindicação de usuário
 				// @formatter:on
 			}
 		};
