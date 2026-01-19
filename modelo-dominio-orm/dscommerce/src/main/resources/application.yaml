@@ -7,7 +7,16 @@ spring:
     name: dscommerce
 
   profiles:
-    active: DEVELOPER
+    active: ${APP_PROFILE:developer}
+
+  jpa:
+    open-in-view: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: developer
 
   datasource:
     url: jdbc:h2:mem:dscommerce_db
@@ -21,7 +30,6 @@ spring:
       path: /h2-console
 
   jpa:
-    open-in-view: false
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop # Alterado de update para create-drop
