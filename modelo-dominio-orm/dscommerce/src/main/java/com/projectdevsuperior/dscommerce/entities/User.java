@@ -16,18 +16,27 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    // Email é único e utilizado como username no Spring Security
     @Column(unique = true)
     private String email;
+
     private String phone;
+
     // Aqui adicionei essa anotação, pois estava dando erro na inserção por não encontrar a coluna birth_date
     @Column(name = "birth_date")
     private LocalDate brithDate;
+
     private String password;
 
-    // Aqui mapeamos o atributo client na classe Order
+    /**
+     * Um usuário pode ter vários pedidos.
+     * Aqui mapeamos o atributo client na classe Order.
+     */
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
 
+    // Relacionamento 'muitos-para-muitos' com roles
     @ManyToMany
     @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -85,6 +94,7 @@ public class User implements UserDetails {
         this.brithDate = brithDate;
     }
 
+    // Implementação do Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -131,6 +141,7 @@ public class User implements UserDetails {
         return roles;
     }
 
+    // Métodos auxiliares
     public void addRole(Role role) {
         roles.add(role);
     }
@@ -144,6 +155,11 @@ public class User implements UserDetails {
         return false;
     }
 
+    /**
+     * // equals e hashCode
+     * @param o   the reference object with which to compare.
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
