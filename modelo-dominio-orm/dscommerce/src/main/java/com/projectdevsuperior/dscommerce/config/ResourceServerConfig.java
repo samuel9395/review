@@ -27,62 +27,103 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity
 public class ResourceServerConfig {
 
-	@Value("${cors.origins}")
-	private String corsOrigins;
+    // Origens permitidas para CORS, definidas via application.properties/yml
+    @Value("${cors.origins}")
+    private String corsOrigins;
 
-	@Bean
-	@Profile("test")
-	@Order(1)
-	public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
+    /**
+     * Configuração de segurança exclusiva para o console H2.
+     * Ativada apenas no profile "developer".
+     */
+    @Bean
+    @Profile("developer")
+    @Order(1)
+    public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
 
-		http.securityMatcher(PathRequest.toH2Console()).csrf(csrf -> csrf.disable())
-				.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-		return http.build();
-	}
+        http.securityMatcher(PathRequest.toH2Console())
+                .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
 
-	@Bean
-	@Order(3)
-	public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http.build();
+    }
 
-		http.csrf(csrf -> csrf.disable());
-		http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
-		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-		return http.build();
-	}
+    /**
+     * Configuração principal do Resource Server.
+     * Responsável por autenticação via JWT e CORS.
+     */
+    @Bean
+    @Order(3)
+    public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
 
-	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-		grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-		grantedAuthoritiesConverter.setAuthorityPrefix("");
+        http.csrf(csrf -> csrf.disable());
 
-		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-		return jwtAuthenticationConverter;
-	}
+        // Autorização fica centralizada em anotações como @PreAuthorize
+        http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
 
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
+        // Configuração do Resource Server com JWT
+        http.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
-		String[] origins = corsOrigins.split(",");
+        // Configuração global de CORS
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
-		CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
-		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
-		corsConfig.setAllowCredentials(true);
-		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        return http.build();
+    }
 
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", corsConfig);
-		return source;
-	}
+    /**
+     * Converte as authorities do JWT para o formato usado pelo Spring Security.
+     */
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
 
-	@Bean
-	FilterRegistrationBean<CorsFilter> corsFilter() {
-		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(
-				new CorsFilter(corsConfigurationSource()));
-		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return bean;
-	}
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
+                new JwtGrantedAuthoritiesConverter();
+
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter =
+                new JwtAuthenticationConverter();
+
+        jwtAuthenticationConverter
+                .setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+
+        return jwtAuthenticationConverter;
+    }
+
+    /**
+     * Define as regras de CORS da aplicação.
+     */
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+
+        String[] origins = corsOrigins.split(",");
+
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
+        corsConfig.setAllowedMethods(
+                Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
+        corsConfig.setAllowCredentials(true);
+        corsConfig.setAllowedHeaders(
+                Arrays.asList("Authorization", "Content-Type"));
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+
+        return source;
+    }
+
+    /**
+     * Registra o filtro de CORS com maior precedência.
+     */
+    @Bean
+    FilterRegistrationBean<CorsFilter> corsFilter() {
+
+        FilterRegistrationBean<CorsFilter> bean =
+                new FilterRegistrationBean<>(
+                        new CorsFilter(corsConfigurationSource()));
+
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 }

@@ -2,7 +2,6 @@
 package com.projectdevsuperior.dscommerce.controllers;
 
 // Importações das classes que serão utilizadas
-
 import com.projectdevsuperior.dscommerce.dto.ProductDTO;
 import com.projectdevsuperior.dscommerce.dto.ProductMinDTO;
 import com.projectdevsuperior.dscommerce.services.ProductService;
