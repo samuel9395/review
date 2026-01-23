@@ -2,7 +2,9 @@
 package com.projectdevsuperior.dscommerce.controllers;
 
 // Importações das classes que serão utilizadas
+
 import com.projectdevsuperior.dscommerce.dto.ProductDTO;
+import com.projectdevsuperior.dscommerce.dto.ProductMinDTO;
 import com.projectdevsuperior.dscommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 /**
- * @RestController
- * Indica que esta classe é um Controller REST.
+ * @RestController Indica que esta classe é um Controller REST.
  * Ela recebe requisições HTTP (GET, POST, PUT, DELETE)
  * e retorna respostas em formato JSON.
- * @RequestMapping("/products")
- * Define a rota base deste controller.
+ * @RequestMapping("/products") Define a rota base deste controller.
  * Todas as URLs aqui começam com /products
  */
 @RestController
@@ -30,7 +30,7 @@ public class ProductController {
 
     /**
      * Injeção de dependência do ProductService.
-     *
+     * <p>
      * O controller NÃO acessa o banco de dados diretamente.
      * Ele apenas recebe a requisição HTTP e delega a regra
      * de negócio para a camada de serviço.
@@ -42,13 +42,13 @@ public class ProductController {
      * BUSCA TODOS OS PRODUTOS
      * Método que responde a requisições GET /products
      * Suporta:
-     *  - Paginação
-     *  - Filtro por nome
+     * - Paginação
+     * - Filtro por nome
      * Exemplo de chamada:
      * GET /products?page=0&size=10&name=tv
      */
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> findAll(
+    public ResponseEntity<Page<ProductMinDTO>> findAll(
 
             /**
              * @RequestParam
@@ -68,7 +68,7 @@ public class ProductController {
             Pageable pageable
     ) {
         // Chama o service para buscar os produtos
-        Page<ProductDTO> dto = service.findAll(name, pageable);
+        Page<ProductMinDTO> dto = service.findAll(name, pageable);
 
         /**
          * ResponseEntity.ok(...)
@@ -171,7 +171,7 @@ public class ProductController {
     /**
      * DELETAR PRODUTO
      * DELETE /products/{id}
-     *
+     * <p>
      * Apenas ADMIN pode deletar
      */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")

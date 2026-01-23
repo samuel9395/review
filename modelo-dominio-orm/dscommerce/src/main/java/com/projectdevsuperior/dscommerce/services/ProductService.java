@@ -1,6 +1,7 @@
 package com.projectdevsuperior.dscommerce.services;
 
 import com.projectdevsuperior.dscommerce.dto.ProductDTO;
+import com.projectdevsuperior.dscommerce.dto.ProductMinDTO;
 import com.projectdevsuperior.dscommerce.entities.Product;
 import com.projectdevsuperior.dscommerce.repositories.ProductRepository;
 import com.projectdevsuperior.dscommerce.services.exceptions.DatabaseException;
@@ -25,14 +26,14 @@ public class ProductService {
 
     // Método responsável por buscar todos os produtos de forma paginada
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(String name, Pageable pageable) {
+    public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
 
         // Aqui mudamos para o Page, para fazer a busca paginada
         // Adicionada a variável name para também realizar buscas de produto por nome
         Page<Product> result = repository.searchByName(name, pageable);
 
         // Converte cada Product em ProductDTO e retorna como lista
-        return result.map(x -> new ProductDTO(x));
+        return result.map(x -> new ProductMinDTO(x));
     }
 
     // readOnly = true evita lock desnecessário no banco
