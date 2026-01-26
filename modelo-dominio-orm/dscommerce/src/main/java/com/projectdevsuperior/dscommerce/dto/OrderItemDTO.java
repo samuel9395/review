@@ -5,13 +5,13 @@ import com.projectdevsuperior.dscommerce.entities.OrderItem;
 // DTO que representa um ‘item’ do pedido
 public class OrderItemDTO {
 
-    private Long produtoId;
+    private Long productId;
     private String name;
     private Double price;
     private Integer quantity;
 
-    public OrderItemDTO(Long produtoId, String name, Double price, Integer quantity) {
-        this.produtoId = produtoId;
+    public OrderItemDTO(Long productId, String name, Double price, Integer quantity) {
+        this.productId = productId;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -19,14 +19,14 @@ public class OrderItemDTO {
 
     // Extrai informações do produto a partir da entidade OrderItem
     public OrderItemDTO(OrderItem enetity) {
-        produtoId = enetity.getProduct().getId();
+        productId = enetity.getProduct().getId();
         name = enetity.getProduct().getName();
         price = enetity.getPrice();
         quantity = enetity.getQuantity();
     }
 
-    public Long getProdutoId() {
-        return produtoId;
+    public Long getProductId() {
+        return productId;
     }
 
     public String getName() {

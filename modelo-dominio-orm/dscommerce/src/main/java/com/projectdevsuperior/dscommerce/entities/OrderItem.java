@@ -20,7 +20,7 @@ public class OrderItem {
 
     public OrderItem() {}
 
-    // Aqui não expomos o "OrderItemPK id", então passamos como parâmetro Order e Product para serem setados no id.
+    // Aqui não expomos o "OrderItemPK ‘id’", então passamos como parâmetro Order e Product para serem setados no ‘id’.
     public OrderItem(Order order, Product product, Integer quantity, Double price) {
         id.setOrder(order);
         id.setProduct(product);
