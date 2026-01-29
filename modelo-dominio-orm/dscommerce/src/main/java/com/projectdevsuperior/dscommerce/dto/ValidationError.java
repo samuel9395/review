@@ -17,10 +17,11 @@ public class ValidationError extends CustomError{
     }
 
     public void addError(String fieldName, String message) {
+        errors.removeIf(x -> x.getFieldName().equals(fieldName));
         errors.add(new FieldMessage(fieldName, message));
     }
 }
 
 
 // Essa classe é uma subclasse da classe CustomError, onde passamos uma lista de arros
-// de acordo com os argumentos inválidos
+// conforme os argumentos inválidos
