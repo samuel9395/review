@@ -1,9 +1,7 @@
 package com.projectdevsuperior.dscommerce.controllers;
 
 import com.projectdevsuperior.dscommerce.dto.OrderDTO;
-import com.projectdevsuperior.dscommerce.dto.ProductDTO;
 import com.projectdevsuperior.dscommerce.services.OrderService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
